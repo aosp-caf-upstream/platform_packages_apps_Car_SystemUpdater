@@ -15,13 +15,16 @@
  */
 package com.android.car.systemupdater;
 
+import static com.android.car.systemupdater.UpdateLayoutFragment.EXTRA_RESUME_UPDATE;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.File;
 
@@ -52,10 +55,18 @@ public class SystemUpdaterActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            DeviceListFragment fragment = new DeviceListFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.device_container, fragment)
-                    .commitNow();
+            Bundle intentExtras = getIntent().getExtras();
+            if (intentExtras != null && intentExtras.getBoolean(EXTRA_RESUME_UPDATE)) {
+                UpdateLayoutFragment fragment = UpdateLayoutFragment.newResumedInstance();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.device_container, fragment)
+                        .commitNow();
+            } else {
+                DeviceListFragment fragment = new DeviceListFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.device_container, fragment)
+                        .commitNow();
+            }
         }
     }
 
